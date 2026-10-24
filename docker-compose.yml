@@ -1,0 +1,15 @@
+services:
+  # Cơ sở dữ liệu PostgreSQL
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: brewlite
+      POSTGRES_PASSWORD: brewlite
+      POSTGRES_DB: brewlite
+    ports:
+      - "5433:5432" # cổng 5433 trên máy để tránh trùng PostgreSQL cài sẵn
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

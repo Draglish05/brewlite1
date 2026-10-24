@@ -1,19 +1,26 @@
 import { Module } from '@nestjs/common';
-import { createObserveModule } from '@nestjs/observe';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
-export const { ObserveModule, ObserveInstrument } = createObserveModule();
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
-    // Distributed tracing, auto-correlated logs, request/job metrics, error
-    // telemetry, alarms, and more — out of the box. Sign up at https://observe.nestjs.com
-    ObserveModule.forRoot({
-      appKey: 'YOUR_APP_KEY',
-      appSecret: 'YOUR_APP_SECRET',
-      serviceId: 'backend',
+    // Đọc file .env vào process.env
+    ConfigModule.forRoot({ isGlobal: true }),
+    // Kết nối PostgreSQL bằng TypeORM (thông tin lấy từ .env)
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      autoLoadEntities: true, // tự nhận các entity khai báo trong từng module
+      synchronize: true, // tự tạo bảng theo entity (chỉ dùng khi phát triển)
     }),
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
